@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from src.api import health
+from src.api import crypto, health
 from src.core.settings import settings
 
 app = FastAPI(
@@ -10,3 +10,4 @@ app = FastAPI(
 )
 
 app.include_router(health.router)
+app.include_router(crypto.router)
