@@ -1,8 +1,8 @@
 import hashlib
 import hmac
-import json
 from typing import Any
 
+from ..utils import to_deterministic_json
 from .protocols import SigningProtocol
 
 
@@ -13,7 +13,7 @@ class HMACSigningService(SigningProtocol):
         """Initialize with a secret key for HMAC."""
         self.secret_key = secret_key.encode("utf-8")
 
-    def sign(self, data: Any) -> str:
+    def sign(self, data: dict[str, Any]) -> str:
         """
         Generate an HMAC signature for the given data.
         Uses deterministic JSON serialization to ensure order independence.
@@ -23,15 +23,13 @@ class HMACSigningService(SigningProtocol):
             >>> service.sign({"name": "John Doe", "age": 30})
             "sha256=..."
         """
-        # Create deterministic(sorted by key) JSON representation
-        # (that works for nested objects too 🪆)
-        json_str = json.dumps(data, sort_keys=True)
-
         return hmac.new(
-            self.secret_key, json_str.encode("utf-8"), hashlib.sha256
+            self.secret_key,
+            to_deterministic_json(data).encode("utf-8"),
+            hashlib.sha256,
         ).hexdigest()
 
-    def verify(self, data: Any, signature: str) -> bool:
+    def verify(self, data: dict[str, Any], signature: str) -> bool:
         """Verify if the signature matches the data."""
         expected_signature = self.sign(data)
         return hmac.compare_digest(signature, expected_signature)
