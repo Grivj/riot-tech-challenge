@@ -24,6 +24,7 @@ class HMACSigningService(SigningProtocol):
             "sha256=..."
         """
         # Create deterministic(sorted by key) JSON representation
+        # (that works for nested objects too 🪆)
         json_str = json.dumps(data, sort_keys=True)
 
         return hmac.new(
