@@ -28,6 +28,34 @@ def test_signature_order_independent():
     assert signature1 == signature2
 
 
+def test_signature_deep_nested_order_independent():
+    """Test that key order in deeply nested objects doesn't affect signature."""
+    service = HMACSigningService(EXTREMELY_SECRET_HMAC_SECRET)
+
+    name = "John"
+    age = 30
+    address = {"city": "New York", "zip": 10001}
+
+    data1 = {
+        "user": {
+            "name": name,
+            "details": {"age": age, "address": address},
+        }
+    }
+    # switched order of key-value pairs
+    data2 = {
+        "user": {
+            "details": {"address": address, "age": age},
+            "name": name,
+        }
+    }
+
+    signature1 = service.sign(data1)
+    signature2 = service.sign(data2)
+
+    assert signature1 == signature2
+
+
 def test_signature_verification():
     """Test basic signature verification."""
     service = HMACSigningService(EXTREMELY_SECRET_HMAC_SECRET)

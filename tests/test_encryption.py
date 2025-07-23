@@ -1,17 +1,29 @@
+from typing import Any
+
+import pytest
+
 from src.services.base64_encryption import Base64EncryptionService
 from src.services.encryption_service import EncryptionService
 
 
-def test_base64_round_trip():
+@pytest.mark.parametrize(
+    "original",
+    [
+        "John Doe",
+        30,
+        {"email": "test@example.com"},
+        [1, 2, 3],
+        True,
+        None,
+    ],
+)
+def test_base64_round_trip(original: Any):
     """Test that encrypt -> decrypt returns original value."""
     service = Base64EncryptionService()
 
-    test_cases = ["John Doe", 30, {"email": "test@example.com"}, [1, 2, 3], True, None]
-
-    for original in test_cases:
-        encrypted = service.encrypt(original)
-        decrypted = service.decrypt(encrypted)
-        assert decrypted == original
+    encrypted = service.encrypt(original)
+    decrypted = service.decrypt(encrypted)
+    assert decrypted == original
 
 
 def test_can_decrypt_detection():
@@ -42,8 +54,10 @@ def test_payload_encryption():
     encrypted = service.encrypt_payload(original)
 
     # All values should be strings (encrypted)
-    for value in encrypted.values():
-        assert isinstance(value, str)
+    assert len(encrypted) == 3
+    assert "name" in encrypted and isinstance(encrypted["name"], str)
+    assert "age" in encrypted and isinstance(encrypted["age"], str)
+    assert "contact" in encrypted and isinstance(encrypted["contact"], str)
 
     # Decrypt
     decrypted = service.decrypt_payload(encrypted)
