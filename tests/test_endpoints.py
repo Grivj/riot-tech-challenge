@@ -18,33 +18,20 @@ def test_health_endpoint():
 
 
 @pytest.mark.parametrize("endpoint", ["/encrypt", "/decrypt", "/sign", "/verify"])
-@pytest.mark.parametrize(
-    "invalid_payload,content_type",
-    [
-        # Non-dict payloads
-        ("string", "application/json"),
-        (123, "application/json"),
-        ([1, 2, 3], "application/json"),
-        (True, "application/json"),
-        (None, "application/json"),
-        # Invalid JSON
-        ("invalid json", "application/json"),
-        ("{not valid json", "application/json"),
-    ],
-)
-def test_invalid_payloads_rejected(
-    endpoint: str, invalid_payload: Any, content_type: str
-):
-    """Test that endpoints reject invalid payloads with 422."""
-    if isinstance(invalid_payload, str) and "json" in invalid_payload:
-        # For invalid JSON strings, send as raw content
-        response = client.post(
-            endpoint, content=invalid_payload, headers={"Content-Type": content_type}
-        )
-    else:
-        # For other invalid types, let FastAPI serialize them
-        response = client.post(endpoint, json=invalid_payload)
+@pytest.mark.parametrize("invalid_payload", ["string", 123, [1, 2, 3], True, None])
+def test_non_dict_payloads_rejected(endpoint: str, invalid_payload: Any):
+    """Test that endpoints reject non-dict payloads with 422."""
+    response = client.post(endpoint, json=invalid_payload)
+    assert response.status_code == 422
 
+
+@pytest.mark.parametrize("endpoint", ["/encrypt", "/decrypt", "/sign", "/verify"])
+@pytest.mark.parametrize("invalid_content", ["invalid json", "{not valid json"])
+def test_invalid_json_content_rejected(endpoint: str, invalid_content: str):
+    """Test that endpoints reject invalid JSON content with 422."""
+    response = client.post(
+        endpoint, content=invalid_content, headers={"Content-Type": "application/json"}
+    )
     assert response.status_code == 422
 
 
