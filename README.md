@@ -6,8 +6,6 @@ This lil' project of mine sticks to sync endpoints and service methods, not beca
 - Fast enough: The main work here is short and CPU-bound without any network or I/O operations.
 - Uvicorn 🐐: `uvicorn --workers 4` gives us plenty of concurrency via processes, which is more effective for CPU-bound tasks than async threading (thanks GIL 🥱).
 
-This choice prioritizes clean code over premature optimization, while ensuring the solution remains scalable with minimal changes.
-
 ---
 
 # Riot Take-Home Technical Challenge
