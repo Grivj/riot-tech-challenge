@@ -17,7 +17,7 @@ router = APIRouter(tags=["crypto"])
     description="Encrypts all properties at depth 1 of the input JSON payload using Base64 encoding.",
     response_description="JSON object with all top-level properties encrypted as strings",
 )
-async def encrypt_payload(
+def encrypt_payload(
     payload: dict[str, Any],
     encryption_service: EncryptionService = Depends(get_encryption_service),
 ) -> dict[str, Any]:
@@ -37,7 +37,7 @@ async def encrypt_payload(
     description="Decrypts properties that can be decrypted, leaves others unchanged.",
     response_description="JSON object with decrypted values where possible",
 )
-async def decrypt_payload(
+def decrypt_payload(
     payload: dict[str, Any],
     encryption_service: EncryptionService = Depends(get_encryption_service),
 ) -> dict[str, Any]:
@@ -57,7 +57,7 @@ async def decrypt_payload(
     description="Generates an HMAC-SHA256 signature for the input data.",
     response_description="Object containing the generated signature",
 )
-async def sign_payload(
+def sign_payload(
     payload: dict[str, Any],
     signing_service: SigningService = Depends(get_signing_service),
 ) -> SignatureResponse:
@@ -80,7 +80,7 @@ async def sign_payload(
         400: {"description": "Signature is invalid or malformed"},
     },
 )
-async def verify_signature(
+def verify_signature(
     request: VerificationRequest,
     signing_service: SigningService = Depends(get_signing_service),
 ) -> Response:
