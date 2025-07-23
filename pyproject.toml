@@ -15,11 +15,13 @@ dependencies = [
 ]
 
 [tool.poetry]
+package-mode = false
 
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
 pytest = "^8.3.0"
 httpx = "^0.28.1"
+pre-commit = "^3.8.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

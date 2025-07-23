@@ -6,6 +6,18 @@ This lil' project of mine sticks to sync endpoints and service methods, not beca
 - Fast enough: The main work here is short and CPU-bound without any network or I/O operations.
 - Uvicorn 🐐: `uvicorn --workers 4` gives us plenty of concurrency via processes, which is more effective for CPU-bound tasks than async threading (thanks GIL 🥱).
 
+## Running the project
+
+```bash
+docker compose up --build -d
+```
+
+## Running the tests
+
+```bash
+poetry run pytest
+```
+
 ---
 
 # Riot Take-Home Technical Challenge
