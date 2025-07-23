@@ -2,6 +2,7 @@ import base64
 import json
 from typing import Any
 
+from ..utils import to_deterministic_json
 from .protocols import EncryptionProtocol
 
 
@@ -10,9 +11,9 @@ class Base64EncryptionService(EncryptionProtocol):
 
     def encrypt(self, value: Any) -> str:
         """Encrypt a value using Base64 encoding."""
-        # Convert to JSON string first, then encode
-        json_str = json.dumps(value, separators=(",", ":"), sort_keys=True)
-        return base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
+        return base64.b64encode(to_deterministic_json(value).encode("utf-8")).decode(
+            "utf-8"
+        )
 
     def decrypt(self, encrypted_value: str) -> Any | None:
         """
