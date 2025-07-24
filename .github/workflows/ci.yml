@@ -1,11 +1,13 @@
-name: Pre-Commit Checks
+name: CI Pipeline
 
 on:
   push:
+    branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
-  pre-commit:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,7 +19,9 @@ jobs:
         run: pip install poetry
       - name: Install dependencies
         run: poetry install
-      - name: Install pre-commit
-        run: poetry run pip install pre-commit
-      - name: Run pre-commit
-        run: poetry run pre-commit run --all-files
+      - name: Run tests
+        run: poetry run pytest
+      - name: Run pre-commit checks
+        run: |
+          poetry run pip install pre-commit
+          poetry run pre-commit run --all-files
