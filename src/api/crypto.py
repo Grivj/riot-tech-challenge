@@ -14,7 +14,8 @@ router = APIRouter(tags=["crypto"])
 @router.post(
     "/encrypt",
     summary="Encrypt JSON payload",
-    description="Encrypts all properties at depth 1 of the input JSON payload using Base64 encoding.",
+    description="Encrypts all properties at depth 1 of the input JSON payload. "
+    "Algorithm can be selected via X-Encryption-Algorithm header (base64|rot13).",
     response_description="JSON object with all top-level properties encrypted as strings",
 )
 def encrypt_payload(
@@ -34,7 +35,8 @@ def encrypt_payload(
 @router.post(
     "/decrypt",
     summary="Decrypt JSON payload",
-    description="Decrypts properties that can be decrypted, leaves others unchanged.",
+    description="Decrypts properties that can be decrypted, leaves others unchanged. "
+    "Algorithm auto-detected or can be specified via X-Encryption-Algorithm header.",
     response_description="JSON object with decrypted values where possible",
 )
 def decrypt_payload(
