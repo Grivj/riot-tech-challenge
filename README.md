@@ -18,7 +18,24 @@ docker compose up --build -d
 poetry run pytest
 ```
 
----
+## Algorithm Switching
+
+As requested in the specifications, the encryption algorithm is easily replaceable through header-based algorithm selection:
+
+```bash
+# Default Base64 encryption
+curl -X POST 'http://localhost:8000/encrypt' \
+  -H 'Content-Type: application/json' \
+  -d '{"message": "Hello World"}'
+
+# Switch to ROT13 encryption via header
+curl -X POST 'http://localhost:8000/encrypt' \
+  -H 'Content-Type: application/json' \
+  -H 'X-Encryption-Algorithm: rot13' \
+  -d '{"message": "Hello World"}'
+```
+
+The strategy pattern is used to encapsulate the different algorithms for encryption and signing and is injected into the service layer.
 
 # Riot Take-Home Technical Challenge
 
