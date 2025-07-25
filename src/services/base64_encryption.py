@@ -3,7 +3,7 @@ import binascii
 import json
 from typing import Any
 
-from ..utils import to_deterministic_json
+from ..utils import to_compact_json
 from .exceptions import DecryptionError
 from .protocols import EncryptionProtocol
 
@@ -13,9 +13,7 @@ class Base64EncryptionService(EncryptionProtocol):
 
     def encrypt(self, value: Any) -> str:
         """Encrypt a value using Base64 encoding."""
-        return base64.b64encode(to_deterministic_json(value).encode("utf-8")).decode(
-            "utf-8"
-        )
+        return base64.b64encode(to_compact_json(value).encode("utf-8")).decode("utf-8")
 
     def decrypt(self, encrypted_value: str) -> Any:
         """
