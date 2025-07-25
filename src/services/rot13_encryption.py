@@ -2,6 +2,7 @@ import json
 from typing import Any
 
 from ..utils import to_deterministic_json
+from .exceptions import DecryptionError
 from .protocols import EncryptionProtocol
 
 
@@ -22,12 +23,10 @@ class ROT13EncryptionService(EncryptionProtocol):
         """
         try:
             return json.loads(self._rot13_decode(encrypted_value))
-        except (ValueError, json.JSONDecodeError):
-            return None
-
-    def can_decrypt(self, value: str) -> bool:
-        """Check if a string can be ROT13 decoded and contains valid JSON."""
-        return self.decrypt(value) is not None
+        except (UnicodeDecodeError, json.JSONDecodeError) as e:
+            raise DecryptionError(
+                f"Failed to decrypt value: {encrypted_value!r} ({e})"
+            ) from e
 
     def _rot13_encode(self, text: str) -> str:
         """Apply ROT13 encoding to text."""

@@ -8,15 +8,11 @@ class EncryptionProtocol(Protocol):
         """Encrypt a single value and return as string."""
         ...
 
-    def decrypt(self, encrypted_value: str) -> Any | None:
+    def decrypt(self, encrypted_value: str) -> Any:
         """
         Decrypt a string value back to its original type.
-        Returns None if the value cannot be decrypted (not encrypted).
+        Raises DecryptionError if the value cannot be decrypted.
         """
-        ...
-
-    def can_decrypt(self, value: str) -> bool:
-        """Check if a string value can be decrypted by this algorithm."""
         ...
 
 
