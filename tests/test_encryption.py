@@ -26,19 +26,6 @@ def test_base64_round_trip(original: Any):
     assert decrypted == original
 
 
-def test_can_decrypt_detection():
-    """Test that can_decrypt correctly identifies encrypted vs unencrypted data."""
-    service = Base64EncryptionService()
-
-    # Valid encrypted data
-    encrypted = service.encrypt("test")
-    assert service.can_decrypt(encrypted) is True
-
-    # Invalid data
-    assert service.can_decrypt("1998-11-19") is False
-    assert service.can_decrypt("not-base64") is False
-
-
 def test_payload_encryption():
     """Test encrypting/decrypting full payloads."""
     algorithm = Base64EncryptionService()
@@ -81,3 +68,27 @@ def test_mixed_content_decryption():
     assert decrypted["name"] == "John Doe"
     assert decrypted["age"] == 30
     assert decrypted["birth_date"] == "1998-11-19"  # unchanged
+
+
+def test_none_value_preservation():
+    """Test that original None values are preserved after encrypt/decrypt cycle."""
+    algorithm = Base64EncryptionService()
+    service = EncryptionService(algorithm)
+
+    original = {
+        "name": "John",
+        "value": None,
+        "active": True,
+        "second_level": {"age": 25, "occupation": None},
+    }
+
+    encrypted = service.encrypt_payload(original)
+    assert all(isinstance(v, str) for v in encrypted.values())
+
+    decrypted = service.decrypt_payload(encrypted)
+
+    # None value should be perfectly preserved
+    assert decrypted == original
+    assert decrypted["value"] is None
+    assert type(decrypted["value"]) is type(None)
+    assert decrypted["second_level"]["occupation"] is None

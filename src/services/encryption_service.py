@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any
 
+from .exceptions import DecryptionError
 from .protocols import EncryptionProtocol
 
 
@@ -30,12 +31,16 @@ class EncryptionService:
             {"name": "John Doe", "age": 30}
         """
 
-        return {
-            key: (
-                # Decrypt if the value is a string and can be decrypted
-                self.algorithm.decrypt(value) or value
-                if isinstance(value, str) and self.algorithm.can_decrypt(value)
-                else value
-            )
-            for key, value in payload.items()
-        }
+        result: dict[str, Any] = {}
+        for key, value in payload.items():
+            if isinstance(value, str):
+                # we can try to decrypt
+                try:
+                    result[key] = self.algorithm.decrypt(value)
+                except DecryptionError:
+                    # unable to decrypt, keep as-is
+                    result[key] = value
+            else:
+                # not a string, keep as-is
+                result[key] = value
+        return result
